@@ -28,8 +28,8 @@ function App() {
         setAnswer(null);
 
         try {
-            // Using n8n webhook directly
-            const response = await axios.post('https://dhairya78.app.n8n.cloud/webhook/question-webhook', {
+            // Using Vercel Proxy to call n8n (Fixes CORS locally)
+            const response = await axios.post('/api/n8n', {
                 question: queryText
             });
 
