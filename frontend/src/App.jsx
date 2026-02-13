@@ -28,8 +28,9 @@ function App() {
         setAnswer(null);
 
         try {
-            // Using n8n webhook (which calls Railway backend)
-            const response = await axios.post('https://dhairya78.app.n8n.cloud/webhook/question-webhook', {
+            // Using backend proxy to call n8n (Avoids CORS completely)
+            // The backend will forward this request to n8n
+            const response = await axios.post('https://academic-info-production.up.railway.app/api/n8n/ask', {
                 question: queryText
             });
 
