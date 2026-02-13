@@ -85,9 +85,8 @@
 
   <script>
 
-    // CHANGE ONLY IF YOUR WEBHOOK PATH CHANGES
-    const WEBHOOK_URL =
-      "https://dhairya78.app.n8n.cloud/webhook/question-webhook";
+    // ✅ FIXED: Call Vercel API instead of n8n directly
+    const WEBHOOK_URL = "https://academic-info-nine.vercel.app/api/n8n";
 
 
     async function sendQuestion(question) {
