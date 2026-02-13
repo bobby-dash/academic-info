@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Academic Assistant</title>
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #0f172a;
+      color: white;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+
+    .box {
+      background: #020617;
+      padding: 25px;
+      border-radius: 12px;
+      width: 350px;
+      text-align: center;
+      box-shadow: 0 0 20px rgba(0, 0, 0, 0.6);
+    }
+
+    h2 {
+      margin-bottom: 15px;
+    }
+
+    input {
+      width: 90%;
+      padding: 10px;
+      border-radius: 6px;
+      border: none;
+      outline: none;
+      margin-bottom: 10px;
+    }
+
+    button {
+      width: 95%;
+      padding: 10px;
+      background: #2563eb;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 16px;
+    }
+
+    button:hover {
+      background: #1d4ed8;
+    }
+
+    #answer {
+      margin-top: 15px;
+      min-height: 30px;
+      color: #22c55e;
+      font-weight: bold;
+    }
+
+    .loading {
+      color: #facc15;
+    }
+
+    .error {
+      color: #ef4444;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="box">
+    <h2>📘 Academic Assistant</h2>
+
+    <input id="question" type="text" placeholder="Ask about exam, date..." />
+
+    <button onclick="handleAsk()">Ask</button>
+
+    <div id="answer"></div>
+  </div>
+
+  <script>
+
+    // CHANGE ONLY IF YOUR WEBHOOK PATH CHANGES
+    const WEBHOOK_URL =
+      "https://dhairya78.app.n8n.cloud/webhook/question-webhook";
+
+
+    async function sendQuestion(question) {
+
+      const res = await fetch(WEBHOOK_URL, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          question: question,
+        }),
+      });
+
+      if (!res.ok) {
+        throw new Error("Server Error: " + res.status);
+      }
+
+      return await res.json();
+    }
+
+
+    async function handleAsk() {
+
+      const input = document.getElementById("question");
+      const answerBox = document.getElementById("answer");
+
+      const question = input.value.trim();
+
+      if (!question) {
+        answerBox.innerText = "⚠️ Please enter a question.";
+        answerBox.className = "error";
+        return;
+      }
+
+      answerBox.innerText = "⏳ Thinking...";
+      answerBox.className = "loading";
+
+      try {
+
+        const data = await sendQuestion(question);
+
+        answerBox.innerText =
+          data.answer || "No response from server.";
+
+        answerBox.className = "";
+
+      } catch (err) {
+
+        console.error(err);
+
+        answerBox.innerText =
+          "❌ Backend Error. Check n8n.";
+
+        answerBox.className = "error";
+      }
+    }
+
+
+    // Press Enter to Send
+    document.getElementById("question")
+      .addEventListener("keypress", function (e) {
+
+        if (e.key === "Enter") {
+          handleAsk();
+        }
+
+      });
+
+  </script>
+
+</body>
+
+</html>

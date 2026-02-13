@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Test n8n Connection</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #1a1a2e;
+            color: #eee;
+        }
+
+        input,
+        button {
+            padding: 10px;
+            margin: 10px 0;
+            width: 100%;
+            font-size: 16px;
+        }
+
+        button {
+            background: #6366f1;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+
+        #result {
+            margin-top: 20px;
+            padding: 15px;
+            background: #16213e;
+            border-radius: 8px;
+            white-space: pre-wrap;
+        }
+
+        .error {
+            color: #ef4444;
+        }
+
+        .success {
+            color: #10b981;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>🧪 n8n Connection Tester</h1>
+    <p>Test your n8n webhook before using the main app</p>
+
+    <input type="text" id="webhookUrl" placeholder="Paste your n8n webhook URL here"
+        value="https://dhairya78.app.n8n.cloud/webhook-test/ask-academic">
+
+    <input type="text" id="testQuestion" placeholder="Test question" value="What is the exam schedule?">
+
+    <button onclick="testWebhook()">Test Connection</button>
+
+    <div id="result"></div>
+
+    <script>
+        async function testWebhook() {
+            const url = document.getElementById('webhookUrl').value;
+            const question = document.getElementById('testQuestion').value;
+            const resultDiv = document.getElementById('result');
+
+            resultDiv.innerHTML = '⏳ Testing connection...';
+
+            try {
+                const response = await fetch(url, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ question: question })
+                });
+
+                const data = await response.json();
+
+                resultDiv.className = 'success';
+                resultDiv.innerHTML = `✅ SUCCESS!\n\nStatus: ${response.status}\n\nResponse:\n${JSON.stringify(data, null, 2)}`;
+
+            } catch (error) {
+                resultDiv.className = 'error';
+                resultDiv.innerHTML = `❌ ERROR!\n\n${error.message}\n\nPossible issues:\n1. CORS not enabled in n8n\n2. Workflow not active\n3. Wrong webhook URL\n4. Network/firewall blocking request`;
+            }
+        }
+    </script>
+</body>
+
+</html>
