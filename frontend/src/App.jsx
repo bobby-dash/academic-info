@@ -28,8 +28,8 @@ function App() {
         setAnswer(null);
 
         try {
-            // Using direct backend API (avoids CORS issues)
-            const response = await axios.post('/api/ask', {
+            // Using n8n webhook (which calls Railway backend)
+            const response = await axios.post('https://dhairya78.app.n8n.cloud/webhook/question-webhook', {
                 question: queryText
             });
 
